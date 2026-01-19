@@ -5,6 +5,7 @@ double_phase:
         - [data/fccee_LCC_105_z_double_phase.colldb.yaml]
         - [H, V]
         - [0, 30, 60, 90]
+        - [$JobID]   # Use job ID as fifth argument
       num_jobs: 20000
 
     - runfile: scripts/pencil.py

@@ -54,6 +54,8 @@ def validate_cases(cases: "OrderedDict[str, List[Dict[str, Any]]]") -> None:
                 )
             if not isinstance(e["args"], list) or any(not isinstance(x, list) for x in e["args"]):
                 raise ValueError(f"Case '{case}' entry #{i}: 'args' must be a list of lists")
+            if any(["$JOBID" in [str(xx).upper() for xx in x] and len(x) > 1 for x in e["args"]]):
+                raise ValueError(f"Case '{case}' entry #{i}: $JobID must be the only element in an args list")
             nj = int(e["num_jobs"])
             if nj <= 0:
                 raise ValueError(f"Case '{case}' entry #{i}: num_jobs must be > 0")
@@ -118,6 +120,7 @@ def write_jobs_list(
                     runfile = str(e["runfile"])
                     for combo in iter_combos(e["args"]):
                         fields = [case, str(step), runfile, *map(str, combo)]
+                        fields = [str(step) if f.upper() == '$JOBID' else f for f in fields]
                         out.write(" ".join(fields) + "\n")
 
 
