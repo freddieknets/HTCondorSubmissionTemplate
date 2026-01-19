@@ -1,0 +1,24 @@
+double_phase:
+    - runfile: scripts/fast_instability.py
+      args:
+        - [data/fccee_LCC_105_z.json]
+        - [data/fccee_LCC_105_z_double_phase.colldb.yaml]
+        - [H, V]
+        - [0, 30, 60, 90]
+      num_jobs: 20000
+
+    - runfile: scripts/pencil.py
+      args:
+        - [data/fccee_LCC_105_z.json]
+        - [data/fccee_LCC_105_z_double_phase.colldb.yaml]
+        - [H, V]
+      num_jobs: 2000
+
+single_phase:
+    - runfile: scripts/fast_instability.py
+      args:
+        - [data/fccee_LCC_105_z.json]
+        - [data/fccee_LCC_105_z_single_phase.colldb.yaml]
+        - [H, V]
+        - [0, 30, 60, 90]
+      num_jobs: 20000
