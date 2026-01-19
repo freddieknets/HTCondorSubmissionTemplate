@@ -3,6 +3,9 @@ import json
 import numpy as np
 from pathlib import Path
 
+import matplotlib
+matplotlib.use("Agg")  # headless, no Tk, to avoid issues with parallellisation
+
 import xobjects as xo
 import xtrack as xt
 import xcoll as xc
