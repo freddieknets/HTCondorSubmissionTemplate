@@ -33,7 +33,7 @@ elif plane == 'DPneg':
     sweep = sweep_hz
 else:
     raise ValueError("Incorrect plane!")
-if engine not in ['everest', 'fluka', 'geant4']:
+if engine not in ['everest', 'fluka', 'geant4', 'black']:
     raise ValueError("Incorrect engine!")
 
 
@@ -62,6 +62,8 @@ elif engine == 'fluka':
     colldb.install_fluka_collimators(line=line, verbose=True, apertures=aperture)
 elif engine == 'geant4':
     colldb.install_geant4_collimators(line=line, verbose=True, apertures=aperture)
+elif engine == 'black':
+    colldb.install_black_absorbers(line=line, verbose=True, apertures=aperture)
 
 
 # Configure collimators
