@@ -6,6 +6,7 @@ JOBSFILE=example.jobs.yaml
 ENVNAME=0.45.15_geant4
 environments=(geant4)
 
+# XSUITEPATH=''   # Install xsuite from PyPI
 XSUITEPATH=/eos/home-f/fvanderv/pythondev/
 AFSSUBMISSIONPATH=/afs/cern.ch/work/f/fvanderv/SimulationSubmissions/
 
@@ -21,31 +22,35 @@ if [ ! -f ${ENVPATH}$envfile ]
 then
     cd $SPOOLPATH
     echo "Sourcing environment..."
-    source submission_scripts/environment.sh "${environments[@]}"
+    source ${STUDYPATH}/submission_scripts/environment.sh "${environments[@]}"
     echo "Creating Xsuite environment..."
     python -m venv --system-site-packages build_venv
     source build_venv/bin/activate
     echo "Installing packages..."
     pip install -U pip setuptools wheel distutils setuptools-scm[toml]
-    pip install ${XSUITEPATH}xobjects
-    pip install ${XSUITEPATH}xdeps
-    pip install ${XSUITEPATH}xtrack
-    pip install ${XSUITEPATH}xpart
-    pip install ${XSUITEPATH}xfields
-    pip install ${XSUITEPATH}xcoll
-    pip install --no-dependencies ${XSUITEPATH}xsuite
-    echo "Prebuilding xsuite kernels..."
-    xsuite-prebuild r
+    if [ "${XSUITEPATH}" == '']
+    then
+        pip install xsuite
+    else
+        pip install ${XSUITEPATH}xobjects
+        pip install ${XSUITEPATH}xdeps
+        pip install ${XSUITEPATH}xtrack
+        pip install ${XSUITEPATH}xpart
+        pip install ${XSUITEPATH}xfields
+        pip install ${XSUITEPATH}xcoll
+        # Do not get the local version of xsuite nor wheels to avoid kernel version conflicts
+        pip install xsuite --no-deps --no-binary=xsuite
+    fi
     # How to automatise for different environments?
     if [[ ${environments[*]} =~ (^|[[:space:]])"fluka"($|[[:space:]]) ]]
     then
         echo "Initializing FLUKA..."
-        python ../scripts/fluka_init_eos.py
+        python ${STUDYPATH}/submission_scripts/fluka_init_eos.py
     fi
     if [[ ${environments[*]} =~ (^|[[:space:]])"geant4"($|[[:space:]]) ]]
     then
         echo "Initializing Geant4..."
-        python ../scripts/geant4_init.py
+        python ${STUDYPATH}/submission_scripts/geant4_init.py
     fi
     echo "Packing environment..."
     pip install venv-pack
@@ -54,8 +59,8 @@ then
     rm -r build_venv
     echo "Environment created."
     echo
-    cd $STUDYPATH
 fi
+cd $STUDYPATH
 
 
 # Spool the necessary files
@@ -64,7 +69,7 @@ if [ -f ${SPOOLPATH}files_${STUDYNAME}.tar.gz ]
 then
     rm ${SPOOLPATH}files_${STUDYNAME}.tar.gz
 fi
-tar -C . -czf spool/files_${STUDYNAME}.tar.gz scripts data -C envs $envfile -C ../submission_scripts environment.sh
+tar -C . -czf ${SPOOLPATH}files_${STUDYNAME}.tar.gz scripts data -C ${ENVPATH} $envfile -C ${STUDYPATH}/submission_scripts environment.sh
 echo
 
 
