@@ -90,6 +90,7 @@ echo "Job list generated."
 echo
 
 cd $DIR
+myschedd bump
 if [ ${#environments[@]} -gt 0 ]
 then
     ENV_LIST="${environments[*]}"
