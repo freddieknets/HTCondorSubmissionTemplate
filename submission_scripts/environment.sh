@@ -25,7 +25,9 @@ do
             echo "Failed to source BDSIM"
             exit $retVal
         fi
-    # elif # other environments can be added here
+    elif [ "$env" = "fluka" ] # other environments can be added here
+    then
+        export XCOLL_PATH=xcoll/xcoll/
     else
         echo "Unknown argument: $env"
         exit 1
